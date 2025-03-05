@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manga API Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .manga-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .manga-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+        }
+        .manga-item img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Manga List</h1>
+    <div class="manga-list" id="manga-list">
+        <!-- Manga items will be dynamically inserted here -->
+    </div>
+
+    <script>
+        const apiKey = '2UujPeFVP8u4sAp30mVkkjJcM8mmRIqW'; // Replace with your actual API key
+        const apiUrl = 'https://api.mangadex.org/manga'; // Example API endpoint (replace with the actual endpoint)
+
+        async function fetchMangaData() {
+            try {
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}` // Add authorization header if required
+                    }
+                });
+                const data = await response.json();
+                displayManga(data.data); // Adjust based on the API response structure
+            } catch (error) {
+                console.error('Error fetching manga data:', error);
+            }
+        }
+
+        function displayManga(mangaList) {
+            const mangaListContainer = document.getElementById('manga-list');
+            mangaListContainer.innerHTML = ''; // Clear existing content
+
+            mangaList.forEach(manga => {
+                const mangaItem = document.createElement('div');
+                mangaItem.className = 'manga-item';
+
+                const mangaTitle = document.createElement('h3');
+                mangaTitle.textContent = manga.attributes.title.en || 'No Title'; // Adjust based on API response
+                mangaItem.appendChild(mangaTitle);
+
+                if (manga.attributes.coverArt) {
+                    const mangaCover = document.createElement('img');
+                    mangaCover.src = manga.attributes.coverArt; // Adjust based on API response
+                    mangaCover.alt = manga.attributes.title.en || 'Manga Cover';
+                    mangaItem.appendChild(mangaCover);
+                }
+
+                mangaListContainer.appendChild(mangaItem);
+            });
+        }
+
+        // Fetch manga data when the page loads
+        fetchMangaData();
+    </script>
+</body>
+</html>
